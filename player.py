@@ -35,10 +35,10 @@ class Player(pygame.sprite.Sprite):
         if self.game_mode == "Neuroevolution":
             self.fitness = 0  # Initial fitness
 
-            layer_sizes = [8, 10, 2]  # TODO (Design your architecture here by changing the values)
+            layer_sizes = [8, 17, 2]  # TODO (Design your architecture here by changing the values)
             self.nn = NeuralNetwork(layer_sizes)
 
-    def create_input_vector(self , obstacles, player_x, player_y ):
+    def create_input_vector(self , obstacles, player_x, player_y , screen_width , screen_height ):
         if(len(obstacles) > 2) :
             first_param = obstacles[0]['x']
             second_param = obstacles[0]['y']
@@ -48,6 +48,7 @@ class Player(pygame.sprite.Sprite):
             sixth_param = obstacles[2]['y']
             seventh_param = player_x
             eighth_param = player_y
+            
 
 
         elif(len(obstacles) > 1):
@@ -81,6 +82,9 @@ class Player(pygame.sprite.Sprite):
             seventh_param = player_x
             eighth_param = player_y
 
+
+
+
         input_vector = np.array((first_param , second_param , third_param , fourth_param , fifth_param , sixth_param , seventh_param , eighth_param ))
         norm = np.linalg.norm(input_vector)
         return input_vector/norm
@@ -88,7 +92,6 @@ class Player(pygame.sprite.Sprite):
     def think(self, screen_width, screen_height, obstacles, player_x, player_y):
         """
         Creates input vector of the neural network and determines the gravity according to neural network's output.
-
         :param screen_width: Game's screen width which is 604.
         :param screen_height: Game's screen height which is 800.
         :param obstacles: List of obstacles that are above the player. Each entry is a dictionary having 'x' and 'y' of
@@ -99,7 +102,7 @@ class Player(pygame.sprite.Sprite):
         :param player_y: 'y' position of the player
         """
 
-        input_vector = self.create_input_vector(obstacles ,  player_x , player_y )
+        input_vector = self.create_input_vector(obstacles ,  player_x , player_y , screen_width , screen_height)
 
         output = self.nn.forward(input_vector)
 
