@@ -38,8 +38,8 @@ class Player(pygame.sprite.Sprite):
             layer_sizes = [8, 17, 2]  # TODO (Design your architecture here by changing the values)
             self.nn = NeuralNetwork(layer_sizes)
 
-    def create_input_vector(self , obstacles, player_x, player_y , screen_width , screen_height ):
-        if(len(obstacles) > 2) :
+    def create_input_vector(self, obstacles, player_x, player_y, screen_width, screen_height):
+        if (len(obstacles) > 2):
             first_param = obstacles[0]['x']
             second_param = obstacles[0]['y']
             third_param = obstacles[1]['x']
@@ -48,10 +48,10 @@ class Player(pygame.sprite.Sprite):
             sixth_param = obstacles[2]['y']
             seventh_param = player_x
             eighth_param = player_y
-            
 
 
-        elif(len(obstacles) > 1):
+
+        elif (len(obstacles) > 1):
             first_param = obstacles[0]['x']
             second_param = obstacles[0]['y']
             third_param = obstacles[1]['x']
@@ -61,18 +61,18 @@ class Player(pygame.sprite.Sprite):
             seventh_param = player_x
             eighth_param = player_y
 
-        elif(len(obstacles) > 0) :
+        elif (len(obstacles) > 0):
             first_param = obstacles[0]['x']
             second_param = obstacles[0]['y']
             third_param = player_x
             fourth_param = player_y
             fifth_param = player_x
-            sixth_param =player_y
+            sixth_param = player_y
             seventh_param = player_x
             eighth_param = player_y
 
 
-        elif(len(obstacles) == 0):
+        elif (len(obstacles) == 0):
             first_param = player_x
             second_param = player_y
             third_param = player_x
@@ -82,12 +82,10 @@ class Player(pygame.sprite.Sprite):
             seventh_param = player_x
             eighth_param = player_y
 
-
-
-
-        input_vector = np.array((first_param , second_param , third_param , fourth_param , fifth_param , sixth_param , seventh_param , eighth_param ))
+        input_vector = np.array((first_param, second_param, third_param, fourth_param, fifth_param, sixth_param,
+                                 seventh_param, eighth_param))
         norm = np.linalg.norm(input_vector)
-        return input_vector/norm
+        return input_vector / norm
 
     def think(self, screen_width, screen_height, obstacles, player_x, player_y):
         """
@@ -102,19 +100,15 @@ class Player(pygame.sprite.Sprite):
         :param player_y: 'y' position of the player
         """
 
-        input_vector = self.create_input_vector(obstacles ,  player_x , player_y , screen_width , screen_height)
+        input_vector = self.create_input_vector(obstacles, player_x, player_y, screen_width, screen_height)
 
         output = self.nn.forward(input_vector)
 
-
-
         # TODO (change player's gravity here by calling self.change_gravity)
-        if output[0][0]>output[1][0] :
+        if output[0][0] > output[1][0]:
             self.change_gravity('left')
         else:
             self.change_gravity('right')
-
-
 
     def change_gravity(self, new_gravity):
         """

@@ -65,13 +65,16 @@ class Evolution:
         """
         # TODO (Implement top-k algorithm here)
         players.sort(key=lambda x: x.fitness, reverse=True)
-
-        best_fitness = players[0].fitness
-        worst_fitness = players[len(players)-1].fitness
-        average_fitness = 0
-        for p in players :
-            average_fitness += p.fitness
-        average_fitness = average_fitness/len(players)
+        fitness_list = [player.fitness for player in players]
+        best_fitness = float(np.max(fitness_list))
+        average_fitness = float(np.mean(fitness_list))
+        worst_fitness = float(np.min(fitness_list))
+        # best_fitness = players[0].fitness
+        # worst_fitness = players[len(players)-1].fitness
+        # average_fitness = 0
+        # for p in players :
+        #     average_fitness += p.fitness
+        # average_fitness = average_fitness/len(players)
         self.save_fitness_results(best_fitness , worst_fitness , average_fitness)
 
         return players[: num_players]
@@ -99,10 +102,12 @@ class Evolution:
         if first_generation:
             return [Player(self.game_mode) for _ in range(num_players)]
         else:
-            new_players = prev_players
-            for i in range( 0, len(prev_players) , 2) :
-                parent1 = prev_players[i]
-                parent2 = prev_players[i+1]
+            new_players = self.q_tournament(num_players , prev_players , 3)
+            children = []
+            # new_players = prev_players
+            for i in range( 0, len(new_players) , 2) :
+                parent1 = new_players[i]
+                parent2 = new_players[i+1]
                 clone_child1 = self.clone_player(parent1)
                 clone_child2 = self.clone_player(parent2)
                 clone_child1.nn.w1 ,  clone_child2.nn.w1 = self.crossover(parent1.nn.w1 , parent2.nn.w1)
@@ -111,13 +116,13 @@ class Evolution:
                 clone_child1.nn.b2, clone_child2.nn.b2 = self.crossover(parent1.nn.b2, parent2.nn.b2)
                 clone_child1 = self.mutation(clone_child1)
                 clone_child2 = self.mutation(clone_child2)
-                new_players.append(clone_child1)
-                new_players.append(clone_child2)
+                children.append(clone_child1)
+                children.append(clone_child2)
 
-            new_players.sort(key=lambda x: x.fitness, reverse=True)
-            new_players = new_players[: num_players]
-            return new_players
-
+            # new_players.sort(key=lambda x: x.fitness, reverse=True)
+            # new_players = new_players[: num_players]
+            return children
+    #
     def clone_player(self, player):
         """
         Gets a player as an input and produces a clone of that player.
